@@ -11,9 +11,9 @@ const cors = require("cors");
 const swaggerJsDoc = require("swagger-jsdoc");
 const swaggerUi = require("swagger-ui-express");
 
-const hospitals = require("./routes/hospitals");
+const carProviders = require("./routes/carProviders");
 const auth = require("./routes/auth");
-const appointments = require("./routes/appointments");
+const bookings = require("./routes/bookings");
 
 //Load env variables
 dotenv.config({ path: "./config/config.env" });
@@ -54,7 +54,7 @@ app.use(cors());
 //Rate limiting
 const limiter = rateLimit({
     windowMs: 10 * 60 * 1000, // 10 mins
-    max: 1000,
+    max: 100,
 });
 app.use(limiter);
 
@@ -82,9 +82,9 @@ const swaggerDocs = swaggerJsDoc(swaggerOptions);
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
 //Route files
-app.use("/api/v1/hospitals", hospitals);
+app.use("/api/v1/car-providers", carProviders);
 app.use("/api/v1/auth", auth);
-app.use("/api/v1/appointments", appointments);
+app.use("/api/v1/bookings", bookings);
 
 const PORT = process.env.PORT || 5000;
 

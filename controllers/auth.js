@@ -25,11 +25,12 @@ const sendTokenResponse = (user, statusCode, res) => {
 //@access Public
 exports.register = async (req, res, next) => {
     try {
-        const { name, email, password, role } = req.body;
+        const { name, tel, email, password, role } = req.body;
 
         //Create user
         const user = await User.create({
             name,
+            tel,
             email,
             password,
             role,
@@ -48,7 +49,6 @@ exports.register = async (req, res, next) => {
 exports.login = async (req, res, next) => {
     try {
         const { email, password } = req.body;
-
         //Validate email & password
         if (!email || !password) {
             return res.status(400).json({
@@ -83,7 +83,7 @@ exports.login = async (req, res, next) => {
 };
 
 //@desc Get current Logged in user
-//@route POST /api/v1/auth/me
+//@route GET /api/v1/auth/me
 //@access Private
 exports.getMe = async (req, res, next) => {
     const user = await User.findById(req.user.id);
@@ -93,11 +93,14 @@ exports.getMe = async (req, res, next) => {
 //@desc Log user out / clear cookie
 //@route GET /api/v1/auth/logout
 //@access Private
-
 exports.logout = async (req, res, next) => {
     res.cookie("token", "none", {
         expires: new Date(Date.now() + 10 * 1000),
         httpOnly: true,
     });
-    res.status(200).json({ success: true, data: {} });
+
+    res.status(200).json({
+        success: true,
+        data: {},
+    });
 };
