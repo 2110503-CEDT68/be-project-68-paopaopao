@@ -99,12 +99,19 @@ exports.addBooking = async (req, res, next) => {
             user: req.user.id,
         });
 
-        if (existedBookings.length >= 3 && req.user.role !== "admin") {
+        const activeBookings = existedBookings.filter(
+            (b) => b.status === "active",
+        );
+
+        if (activeBookings.length >= 3 && req.user.role !== "admin") {
             return res.status(400).json({
                 success: false,
                 message: `The user with ID ${req.user.id} has already made 3 bookings`,
             });
         }
+
+        //Remove reviewing fields if exist in the request body
+        req.body.review = undefined;
 
         const booking = await Booking.create(req.body);
 
@@ -144,6 +151,9 @@ exports.updateBooking = async (req, res, next) => {
                 message: `User ${req.user.id} is not authorized to update this booking`,
             });
         }
+
+        //Remove reviewing fields if exist in the request body
+        req.body.review = undefined;
 
         booking = await Booking.findByIdAndUpdate(req.params.id, req.body, {
             new: true,

@@ -15,6 +15,27 @@ const BookingSchema = new mongoose.Schema({
         ref: "CarProvider",
         required: true,
     },
+    status: {
+        type: String,
+        enum: ["active", "completed"],
+        default: "active",
+    },
+    review: {
+        rating: {
+            type: Number,
+            min: 1,
+            max: 5,
+        },
+        comment: {
+            type: String,
+        },
+        createdAt: {
+            type: Date,
+        },
+        updatedAt: {
+            type: Date,
+        },
+    },
     createdAt: {
         type: Date,
         default: Date.now,
