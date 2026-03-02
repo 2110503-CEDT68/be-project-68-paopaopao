@@ -1,7 +1,7 @@
-@startuml VacQ System Use Case Diagram
+@startuml Rental Car Booking System
 left to right direction
 actor "User" as user
-rectangle "VacQ System" as VacQSystem {    
+rectangle "Rental Car Booking System" as VacQSystem {    
     usecase "Register" as register
     usecase "View\nCar Providers" as viewCarProviders
     usecase "Manage\nBookings" as manageBookings
