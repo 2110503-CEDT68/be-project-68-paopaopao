@@ -8,6 +8,7 @@ participant "Client" as client
 participant "<<javaScript>>\n:server" as server
 participant "<<router>>\n:carProviders" as routerCarProviders
 participant "<<router>>\n:bookings" as routerBookings
+participant "<<middleware>>\n:auth" as middlewareAuth
 participant "<<controllers>>\n:bookings" as controllersBookings
 participant "<<model>>\n:CarProvider" as modelCarProvider
 participant "<<model>>\n:Booking" as modelBooking
@@ -16,11 +17,13 @@ database "<<MongoDB>>\n:bookings" as BookingsDatabase
 client->server ++:req.post('/api/v1/car-providers/:carProviderId/bookings')
 server->routerCarProviders ++:app.use('/api/v1/car-providers',carProviders)
 routerCarProviders->routerBookings ++:router.use('/:carProviderId/bookings/',bookings)
-routerBookings->controllersBookings ++:addBooking()
+routerBookings->middlewareAuth ++:protect()
+middlewareAuth->controllersBookings ++:next()
 controllersBookings->modelCarProvider ++:findById(req.params.carProviderId)
 modelCarProvider->BookingsDatabase ++: CarProviderSchema
 BookingsDatabase-->modelCarProvider --: carProvider
 controllersBookings<--modelCarProvider --: carProvider
 controllersBookings->client --:response
+deactivate middlewareAuth
 
 @enduml

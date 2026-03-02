@@ -7,21 +7,20 @@ title "Update Car Provider (PUT /api/v1/car-providers/:id)"
 participant "Client" as client
 participant "<<javaScript>>\n:server" as server
 participant "<<router>>\n:carProviders" as routerCarProviders
+participant "<<middleware>>\n:auth" as middlewareAuth
 participant "<<controllers>>\n:carProviders" as controllersCarProviders
 participant "<<model>>\n:CarProvider" as modelCarProvider
 database "<<MongoDB>>\n:carproviders" as CarProvidersDatabase
 
 client->server ++:req.put('/api/v1/car-providers/:id')
 server->routerCarProviders ++:app.use('/api/v1/car-providers',carProviders)
-routerCarProviders -> controllersCarProviders ++:updateCarProvider()
+routerCarProviders->middlewareAuth ++:protect()
+middlewareAuth->controllersCarProviders ++:next()
 controllersCarProviders->modelCarProvider ++:findByIdAndUpdate(req.params.id, req.body)
 modelCarProvider ->CarProvidersDatabase ++: CarProviderSchema
 CarProvidersDatabase -->modelCarProvider --: carProvider
 controllersCarProviders <- modelCarProvider --:carProvider
-alt carProvider not found
-    controllersCarProviders->client --:response
-else updated
-    controllersCarProviders->client --:response
-end
+controllersCarProviders->client --:response
+deactivate middlewareAuth
 
 @enduml
